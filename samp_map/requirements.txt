@@ -1,0 +1,4 @@
+geocoder library
+flask library
+mysql-connector-python library
+flask-googlemaps library
