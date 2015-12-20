@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block body %}
+<div class="container">
+  <h1> Stats from the database! </h1>
+  <p> Most danceable song: {{most_dance_s}} by {{most_dance_a}} with a danceability of: {{most_dance_d}} </p>
+  <p> Genre with the most samples: {{g_most_samples}} </p>
+  <p> Genre sampled the most: {{g_most_sampled}} </p>
+  <p> Artist with the most samples: {{a_most_samples}} </p>
+  <p> Artist sampled the most: {{a_most_sampled}}</p>
+  <p> Song with the most samples: {{s_most_samples}}</p>
+  <p> Song sampled the most: {{s_most_sampled}}</p>
+</div>
+{% endblock %}

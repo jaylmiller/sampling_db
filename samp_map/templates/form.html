@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block body %}
+<div class="container">
+  <div class="row text-center">
+    <h1>Map Samples!</h1>
+  </div>
+  <div class="row">
+    <form class="form-horizontal" role="form" method="post" action="/">
+      <div class="form-group">
+        <label for="artist-name" class="col-md-2 col-md-offset-1 control-label">Artist Name:</label>
+        <div class="col-md-6">
+          <input type="text" class="form-control" id="artist-name" placeholder="Enter Artist Name" value = "">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md6 col-md-offset-1">
+          <div class="radio">
+            <label><input type="radio" class="form-control" id="samp" name="samp">Samples</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" class="form-control" id="samp" name="samp">Sampled</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md-6 col-md-offset-5">
+          <input id="submit" name="submit" type="Submit" value="Send" class="btn btn-primary">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

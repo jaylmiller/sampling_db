@@ -1,14 +1,14 @@
-{% extends "layout.html" %}
+{% extends "form.html" %}
 {% block head %}
   {{ super() }}
   {{mymap.js}}
 {% endblock %}
 {% block body %}
+{{ super() }}
 <div class="container">
   <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8 text-center">
-      <h1>Flask Google Maps Example</h1>
       {{mymap.html}}
     </div>
     <div class="col-md-2"></div>
