@@ -3,6 +3,7 @@ import urllib
 import Queue
 import sys
 from time import sleep
+import requests
 
 BASE_URL = "http://www.whosampled.com"
 
@@ -81,7 +82,7 @@ def trackpage_from_samplepage(url, get_sampled=True):
     link2 = track_name["href"]
     return BASE_URL + link2.strip()
 
-def crawl(url, crawl_to, seen, samplers_seen):
+def crawl(url, crawl_to, seen=[], samplers_seen=[]):
     print url.strip()
     print crawl_to.qsize()
     seen.append(url)
