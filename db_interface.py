@@ -67,6 +67,7 @@ def update_song_table(cnx, song_id, artist_id, title):
     cursor.execute(add_song)
     cnx.commit()
     cursor.close()
+    print "Song: " + title + " added to db!"
 
 
 def update_sampled_table(cnx, song_id, sampled_id):
@@ -110,6 +111,7 @@ def update_artist_table(cnx, artist_id, name):
 
     for g in genres_strings:
         update_genre_table(cnx, artist_id, g)
+    print "Artist: " + name + " added to db!"
 
 
 def check_in_db_with_pk(cnx, pk_value, pk_name, table):

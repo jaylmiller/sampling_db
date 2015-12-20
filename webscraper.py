@@ -1,11 +1,12 @@
 from bs4 import BeautifulSoup
-import urllib
+import urllib2
 import Queue
 import sys
 from time import sleep
 from db_interface import *
 
 BASE_URL = "http://www.whosampled.com"
+HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
 
 def crawl(cnx, url, crawl_to, seen=[], samplers_seen=[]):
@@ -34,7 +35,7 @@ def crawl(cnx, url, crawl_to, seen=[], samplers_seen=[]):
     try:
         artist, title, sample_info, links = get_trackpage_info(url,
                                                                samplers_seen)
-        sleep(2)
+        sleep(5)
 
     except KeyboardInterrupt:
         cnx.close()
@@ -65,8 +66,8 @@ def get_trackpage_info(url, samplers_seen):
     for that track, as well as all the tracks it samples, and also return
     a list of links to crawl to, which are all other tracks that also sample
     atleast 1 of the tracks the one on this page samples. """
-
-    html = urllib.urlopen(str(url)).read()
+    req = urllib2.Request(url, None, HEADERS)
+    html = urllib2.urlopen(req).read()
     parse = BeautifulSoup(html, "html.parser")
 
     track_info = parse("div", "trackInfo")[0]
@@ -95,7 +96,8 @@ def get_trackpage_info(url, samplers_seen):
         else:
             samplers_seen.append(link2)
 
-        html = urllib.urlopen(link2)
+        req = urllib2.Request(link2, None, HEADERS)
+        html = urllib2.urlopen(req).read()
         parse = BeautifulSoup(html, "html.parser")
         section_header = parse("div", "sectionHeader")
         second_sec = False
@@ -106,7 +108,8 @@ def get_trackpage_info(url, samplers_seen):
             second_sec = True
 
         if len(section_header.contents) == 5:
-            html = urllib.urlopen(link2 + "sampled")
+            req = urllib2.Request(link2 + "sampled", None, HEADERS)
+            html = urllib2.urlopen(req).read()
             parse = BeautifulSoup(html, "html.parser")
             second_sec = False
 
@@ -132,8 +135,8 @@ def trackpage_from_samplepage(url, get_sampled=True):
     returned is the one for the song being sampled, and if false it returns
     the url for the song that is doing the sampling.
     """
-
-    html = urllib.urlopen(url.strip())
+    req = urllib2.Request(url, None, HEADERS)
+    html = urllib2.urlopen(req).read()
     parse = BeautifulSoup(html, "html.parser")
     if get_sampled:
         trackinfo = parse("div", "sampleEntryBox")[1]
@@ -150,5 +153,5 @@ def trackpage_from_samplepage(url, get_sampled=True):
 if __name__ == "__main__":
     q = Queue.Queue()
     cnx = get_connection()
-    crawl(cnx, 'http://www.whosampled.com/Kanye-West/Mercy/',
+    crawl(cnx, 'http://www.whosampled.com/Kanye-West/Runaway/',
           q, [], [])
