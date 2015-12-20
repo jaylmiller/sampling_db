@@ -199,5 +199,12 @@ BEGIN
 END;
 //
 
-
+DROP PROCEDURE IF EXISTS GetArtist //
+CREATE PROCEDURE GetArtist(IN artist_name VARCHAR(30))
+BEGIN
+  SELECT *
+  FROM artist
+  WHERE name LIKE artist_name;
+END;
+//
 DELIMITER ;

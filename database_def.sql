@@ -37,3 +37,5 @@ CREATE TABLE genre(
     artist_id       VARCHAR(30) NOT NULL,
     genre           VARCHAR(30)
 );
+
+CREATE INDEX part_of_name ON artist (name(10));
