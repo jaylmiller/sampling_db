@@ -5,6 +5,7 @@ from flask.ext.googlemaps import GoogleMaps
 from flask.ext.googlemaps import Map
 import mysql.connector
 import geocoder
+import random
 
 #configuration
 DEBUG       = True
@@ -48,15 +49,53 @@ def mapview():
         loc = geocoder.google('USA').latlng
         #Get info
         if request.form['option'] == 'whosamples':
-            cursor.callproc('GetSongsWhoSample', [name])
+            cursor.callproc('FGetSongsWhoSample', [name])
             for result in cursor.stored_results():
                 songs = result.fetchall()
             locs, info = get_markers_and_info(songs, True)
+            cursor.callproc('WhoSampleAvgDance', [name])
+            for result in cursor.stored_results():
+                dance = result.fetchall()
+            if len(dance) > 0:
+                dance_str = "Average Danceability of Songs that Sample this Artist: " \
+                            + str(dance[0][1])
+            else:
+                dance_str = "Average Danceability of Songs that Sample this Artist: " \
+                            + "None!"
+            cursor.callproc('WhoSampledGenre', [name])
+            for result in cursor.stored_results():
+                genre = result.fetchall()
+            if len(genre) > 0:
+                genre_str = "Most common genre of Songs that Sample this Artist: " \
+                            + str(genre[0][1])
+            else:
+                genre_str = "Most common genre of Songs that Sample this Artist: " \
+                            + "None!!"
+
         else:
-            cursor.callproc('GetSongsSampled', [name])
+            cursor.callproc('FGetSongsSampled', [name])
             for result in cursor.stored_results():
                 songs = result.fetchall()
             locs, info = get_markers_and_info(songs, False)
+            cursor.callproc('SampledAvgDance', [name])
+            for result in cursor.stored_results():
+                dance = result.fetchall()
+            if len(dance) > 0:
+                dance_str = "Average Danceability of Songs this Artist Samples: " \
+                            + str(dance[0][1])
+            else:
+                dance_str = "Average Danceability of Songs this Artist Samples: " \
+                            + "None!!"
+            cursor.callproc('SampledGenre', [name])
+            for result in cursor.stored_results():
+                genre = result.fetchall()
+            if len(genre) > 0:
+                genre_str = "Most common genre of Songs that this Artist Samples: " \
+                            + str(genre[0][1])
+            else:
+                genre_str = "Most common genre of Songs that this Artist Samples: " \
+                            + "None!!"
+
         cursor.close()
         #make map
         mymap = Map(
@@ -69,22 +108,23 @@ def mapview():
             infobox=info,
             markers={ 'http://maps.google.com/mapfiles/ms/icons/green-dot.png':locs}
         )
-        return render_template('main.html', mymap=mymap)
+        return render_template('main.html', mymap=mymap, genre_str=genre_str, \
+                                            dance_str=dance_str, name=name)
 
 def get_markers_and_info(songs, who_sampled):
-    print 'get_markers_and_info'
     info = []
     locs = []
-    for a1_id, a1_loc, s1_title, a2_loc, a2_name, s2_title, s2_year in songs:
+    for s1_title, a2_loc, a2_name, s2_title in songs:
         if who_sampled:
             temp_str = "<p> " + str(s2_title) + " by " + str(a2_name) + "</p>"\
                        "<p>Sampled: " + str(s1_title) + "</p>"
         else:
             temp_str = "<p> " + str(s2_title) + " by " + str(a2_name) + "</p>"\
                        "<p>Was Sampled In: " + str(s1_title) + "</p>"
-        print temp_str
         loc = geocoder.google(str(a2_loc)).latlng
-        print loc
+        #Introduce jiggle
+        loc[0] = loc[0] + random.randrange(-100,100) / 1000.0
+        loc[1] = loc[1] + random.randrange(-100,100) / 1000.0
         info.append(temp_str)
         locs.append(loc)
     return locs, info

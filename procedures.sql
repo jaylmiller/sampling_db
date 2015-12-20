@@ -6,7 +6,8 @@ USE final
 
 DELIMITER //
 
-/* Returns info of all songs who sample songs made by artist_name */
+/* Returns info of all songs who sample songs made by artist_name 
+   DEPRECATED --- WAY TO SLOW*/
 DROP PROCEDURE IF EXISTS GetSongsWhoSample //
 CREATE PROCEDURE GetSongsWhoSample(IN artist_name VARCHAR(30))
 BEGIN
@@ -20,7 +21,23 @@ BEGIN
 END;
 //
 
-/* Returns info of all songs sampled by artist_name */
+/* Returns info of all songs who sample songs made by artist_name*/
+DROP PROCEDURE IF EXISTS FGetSongsWhoSample //
+CREATE PROCEDURE FGetSongsWhoSample(IN artist_name VARCHAR(30))
+BEGIN
+  SELECT q1.title, a2.location, a2.name, s2.title
+  FROM (SELECT s.title, samp.song_md5
+        FROM song as s, artist as a, sampled as samp
+        WHERE a.name LIKE artist_name
+              AND s.artist_id = a.artist_id
+              AND samp.sampled_md5 = s.audio_md5) as q1, song as s2, artist as a2
+  WHERE q1.song_md5 LIKE s2.audio_md5
+        AND s2.artist_id LIKE a2.artist_id;
+END;
+//
+
+/* Returns info of all songs sampled by artist_name
+   DEPRECATED --- To Slow!!! */
 DROP PROCEDURE IF EXISTS GetSongsSampled //
 CREATE PROCEDURE GetSongsSampled(IN artist_name VARCHAR(30))
 BEGIN
@@ -31,6 +48,22 @@ BEGIN
         AND s1.audio_md5 LIKE samp.song_md5
         AND s2.audio_md5 LIKE samp.sampled_md5
         AND s2.artist_id LIKE a2.artist_id; 
+END;
+//
+
+
+/* Returns info of all songs sampled by artist_name*/
+DROP PROCEDURE IF EXISTS FGetSongsSampled //
+CREATE PROCEDURE FGetSongsSampled(IN artist_name VARCHAR(30))
+BEGIN
+  SELECT q1.title, a2.location, a2.name, s2.title
+  FROM (SELECT s.title, samp.sampled_md5
+        FROM song as s, artist as a, sampled as samp
+        WHERE a.name LIKE artist_name
+              AND s.artist_id = a.artist_id
+              AND samp.song_md5 = s.audio_md5) as q1, song as s2, artist as a2
+  WHERE q1.sampled_md5 LIKE s2.audio_md5
+        AND s2.artist_id LIKE a2.artist_id;
 END;
 //
 
