@@ -1,3 +1,10 @@
+""" This module contains functions that directly update the
+database, given information gathered by the webcrawler.
+The webcrawler gets artist and song names and sample lists
+and then this module takes those, gets more data on them using
+get_echonest_data.py, and then puts that data into our database.
+"""
+
 import mysql.connector
 from config import MYSQL_INFO
 from get_echonest_data import *
@@ -119,7 +126,8 @@ def check_in_db_with_pk(cnx, pk_value, pk_name, table):
         cursor.close()
         return False
 
-
+"""Just for testing...
+"""
 if __name__ == "__main__":
     cnx = get_connection()
     add_song_and_its_samples(cnx, ('Kendrick Lamar', 'Money Trees'),

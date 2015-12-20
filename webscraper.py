@@ -8,7 +8,64 @@ from db_interface import *
 BASE_URL = "http://www.whosampled.com"
 
 
+def crawl(cnx, url, crawl_to, seen=[], samplers_seen=[]):
+    """ This function populates our database on the fly.
+    It does a breadth-first crawl of whosampled.com where the pages
+    to crawl to next are determined by the get_trackpage_info function, and the
+    info to populate the database is determined by the trackpage_info
+    combined with calls to the echonest API (see get_echonest_data.py).
+
+    Note that this function will go on for an extremely long time, the only way
+    to stop it is by hitting control c in the terminal.
+
+    Args:
+        cnx - connection to mysql server (see db_interface.py)
+        url - the current url being searched
+        crawl_to - a queue of the links to search
+        seen - an array of urls already seen (just to help some functions
+            work faster)
+        samplers_seen - another array of urls already seen (just to help some
+            functions work faster)
+    """
+
+    print url.strip()
+    print crawl_to.qsize()
+    seen.append(url)
+    try:
+        artist, title, sample_info, links = get_trackpage_info(url,
+                                                               samplers_seen)
+        sleep(2)
+
+    except KeyboardInterrupt:
+        cnx.close()
+        sys.exit(0)
+    except:
+        link = crawl_to.get()
+        crawl(cnx, link, crawl_to, seen, samplers_seen)
+        return
+    try:
+        add_song_and_its_samples(cnx, (artist, title), sample_info)
+    except:
+        print artist, title
+        print sample_info
+        cnx.close()
+        sys.exit(0)
+    for i in links:
+        if i in seen:
+            continue
+        crawl_to.put(i)
+    if not crawl_to.empty():
+        link = crawl_to.get()
+        crawl(cnx, link, crawl_to, seen, samplers_seen)
+
+
 def get_trackpage_info(url, samplers_seen):
+    """ Given a trackpage, i.e. a page for a track
+    listing all it's samples. Get the info, artist name, song name,
+    for that track, as well as all the tracks it samples, and also return
+    a list of links to crawl to, which are all other tracks that also sample
+    atleast 1 of the tracks the one on this page samples. """
+
     html = urllib.urlopen(str(url)).read()
     parse = BeautifulSoup(html, "html.parser")
 
@@ -70,6 +127,12 @@ def get_trackpage_info(url, samplers_seen):
 
 
 def trackpage_from_samplepage(url, get_sampled=True):
+    """ Helper function just to get to the trackpage url from the
+    page describing a specific sample. If get_sampled is true, the trackpage
+    returned is the one for the song being sampled, and if false it returns
+    the url for the song that is doing the sampling.
+    """
+
     html = urllib.urlopen(url.strip())
     parse = BeautifulSoup(html, "html.parser")
     if get_sampled:
@@ -81,37 +144,11 @@ def trackpage_from_samplepage(url, get_sampled=True):
     link2 = track_name["href"]
     return BASE_URL + link2.strip()
 
-def crawl(cnx, url, crawl_to, seen=[], samplers_seen=[]):
-    print url.strip()
-    print crawl_to.qsize()
-    seen.append(url)
-    try:
-        artist, title, sample_info, links = get_trackpage_info(url,
-                                                               samplers_seen)
-        sleep(2)
 
-    except KeyboardInterrupt:
-        sys.exit(0)
-    except:
-        link = crawl_to.get()
-        crawl(cnx, link, crawl_to, seen, samplers_seen)
-        return
-    try:
-        add_song_and_its_samples(cnx, (artist, title), sample_info)
-    except:
-        print artist, title
-        print sample_info
-        sys.exit(0)
-    for i in links:
-        if i in seen:
-            continue
-        crawl_to.put(i)
-    if not crawl_to.empty():
-        link = crawl_to.get()
-        crawl(cnx, link, crawl_to, seen, samplers_seen)
+
 
 if __name__ == "__main__":
     q = Queue.Queue()
     cnx = get_connection()
-    crawl(cnx, 'http://www.whosampled.com/Drake/Pound-CakeParis-Morton-Music-2/',
+    crawl(cnx, 'http://www.whosampled.com/Kanye-West/Mercy/',
           q, [], [])
