@@ -1,0 +1,12 @@
+{% extends "form.html" %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block body %}
+{{ super() }}
+<div class="container">
+  <div class="row text-center">
+    <h1> Artist "{{ name }}" does not exist in the Database! </h1>
+  </div>
+</div>
+{% endblock %}
