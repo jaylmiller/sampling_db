@@ -3,7 +3,7 @@ import urllib
 import Queue
 import sys
 from time import sleep
-import requests
+from db_interface import *
 
 BASE_URL = "http://www.whosampled.com"
 
@@ -33,7 +33,6 @@ def get_trackpage_info(url, samplers_seen):
     track_links = []
     for link in links_out:
         link2 = trackpage_from_samplepage(BASE_URL + link.strip())
-        print link2
         if link2 in samplers_seen:
             continue
         else:
@@ -67,7 +66,7 @@ def get_trackpage_info(url, samplers_seen):
             track_links.append(trackpage_from_samplepage(BASE_URL+sublink,
                                                          get_sampled=False))
 
-    return title, artist, sample_info, list(set(track_links))
+    return artist, title, sample_info, list(set(track_links))
 
 
 def trackpage_from_samplepage(url, get_sampled=True):
@@ -82,30 +81,37 @@ def trackpage_from_samplepage(url, get_sampled=True):
     link2 = track_name["href"]
     return BASE_URL + link2.strip()
 
-def crawl(url, crawl_to, seen=[], samplers_seen=[]):
+def crawl(cnx, url, crawl_to, seen=[], samplers_seen=[]):
     print url.strip()
     print crawl_to.qsize()
     seen.append(url)
     try:
-        info = get_trackpage_info(url, samplers_seen)
+        artist, title, sample_info, links = get_trackpage_info(url,
+                                                               samplers_seen)
         sleep(2)
 
     except KeyboardInterrupt:
         sys.exit(0)
     except:
         link = crawl_to.get()
-        crawl(link, crawl_to, seen, samplers_seen)
+        crawl(cnx, link, crawl_to, seen, samplers_seen)
         return
-
-    for i in info[3]:
+    try:
+        add_song_and_its_samples(cnx, (artist, title), sample_info)
+    except:
+        print artist, title
+        print sample_info
+        sys.exit(0)
+    for i in links:
         if i in seen:
             continue
         crawl_to.put(i)
     if not crawl_to.empty():
         link = crawl_to.get()
-        crawl(link, crawl_to, seen, samplers_seen)
+        crawl(cnx, link, crawl_to, seen, samplers_seen)
 
 if __name__ == "__main__":
     q = Queue.Queue()
-    crawl('http://www.whosampled.com/Drake/Pound-CakeParis-Morton-Music-2/',
+    cnx = get_connection()
+    crawl(cnx, 'http://www.whosampled.com/Drake/Pound-CakeParis-Morton-Music-2/',
           q, [], [])

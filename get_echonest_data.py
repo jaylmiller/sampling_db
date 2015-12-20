@@ -73,12 +73,12 @@ def song_info(song_id):
         mode = 'minor'
     danceability = audio_summary['danceability']
 
-    track = song['tracks'][0]
-    if 'album_date' in track:
+    try:
+        track = song['tracks'][0]
         year = track['album_date']
         year = year.split('-')[0]
-    else:
-        year = 'Unknown'
+    except:
+        year = None
 
     return tempo, s_key, mode, danceability, year
 
