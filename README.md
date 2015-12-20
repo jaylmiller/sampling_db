@@ -8,8 +8,8 @@
 
 **3** N/A
 
-**4** The database was populated by creating a webscraper that scraped the website www.whosampled.com to get information on which songs sampled others. Then for each sampling relation found, information on each song, and the song's artist, were collected using the API from www.echonest.com. The webscraper traverses www.whosampled.com by after inspecting one song and its samples, and will add any song that also sampled a song in the previous song's samples to a queue of links to look at it (so it is searching breadth-first).
-The webscraper.py, db_interface.py, and get_echonest_data.py scripts are the 3 scripts used for information extraction/database population.
+**4** The database was populated by creating a webscraper that scraped the website www.whosampled.com to get information on which songs sampled others. Then for each sampling relation found, information on each song, and the song's artist, were collected using the API from www.echonest.com. The webscraper traverses www.whosampled.com by inspecting one song and its samples, and then adding any song that also sampled a song in the previous song's samples to a queue of links to look at next (so it is searching breadth-first).
+The webscraper.py, db_interface.py, and get_echonest_data.py scripts are the 3 python modules used for information extraction/database population.
 
 **5** N/A
 
