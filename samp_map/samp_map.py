@@ -51,24 +51,38 @@ def about():
 @app.route("/stats")
 def stats():
     cursor = g.db.cursor()
-    g_most_sampled = cursor.callproc('GenreMostSampled')
-    g_most_samples = cursor.callproc('GenreMostSamples')
-    a_most_samples = cursor.callproc('ArtistMostSamples')
-    a_most_sampled = cursor.callproc('ArtistMostSampled')
-    s_most_samples = cursor.callproc('SongMostSamples')
-    s_most_sampled = cursor.callproc('SongMostSampled')
-    #most_dance     = cursor.callproc('MostDance')
-    most_dance = ('love', 'joe', .5)
+    #Call all the stored procedures
+    cursor.callproc('GenreMostSampled')
+    for result in cursor.stored_results():
+        g_most_sampled = result.fetchall()
+    cursor.callproc('GenreMostSamples')
+    for result in cursor.stored_results():
+        g_most_samples = result.fetchall()
+    cursor.callproc('ArtistMostSamples')
+    for result in cursor.stored_results():
+        a_most_samples = result.fetchall()
+    cursor.callproc('ArtistMostSampled')
+    for result in cursor.stored_results():
+        a_most_sampled = result.fetchall()
+    cursor.callproc('SongMostSamples')
+    for result in cursor.stored_results():
+        s_most_samples = result.fetchall()
+    cursor.callproc('SongMostSampled')
+    for result in cursor.stored_results():
+        s_most_sampled = result.fetchall()
+    cursor.callproc('MostDance')
+    for result in cursor.stored_results():
+        most_dance = result.fetchall()
     cursor.close()
-    return render_template('stats.html', g_most_sampled = g_most_sampled, \
-                                         g_most_samples = g_most_samples, \
-                                         a_most_samples = a_most_samples, \
-                                         a_most_sampled = a_most_sampled, \
-                                         s_most_samples = s_most_samples, \
-                                         s_most_sampled = s_most_sampled, \
-                                         most_dance_s   = most_dance[0],  \
-                                         most_dance_a   = most_dance[1],  \
-                                         most_dance_d   = str(most_dance[2]))
+    return render_template('stats.html', g_most_sampled = str(g_most_sampled[0][0]), \
+                                         g_most_samples = str(g_most_samples[0][0]), \
+                                         a_most_samples = str(a_most_samples[0][0]), \
+                                         a_most_sampled = str(a_most_sampled[0][0]), \
+                                         s_most_samples = str(s_most_samples[0][0]), \
+                                         s_most_sampled = str(s_most_sampled[0][0]), \
+                                         most_dance_s   = str(most_dance[0][0]),  \
+                                         most_dance_a   = str(most_dance[0][1]),  \
+                                         most_dance_d   = str(most_dance[0][2]))
 #@app.route('/stuff', optional--methods=['POST'])
 #to do website:
 #return render_template('template_name.html', optional--template_obj=var)
