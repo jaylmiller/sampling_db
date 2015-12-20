@@ -20,7 +20,6 @@ DROP TABLE IF EXISTS artist;
 CREATE TABLE artist(
     artist_id       VARCHAR(30) NOT NULL,
     name            VARCHAR(30),
-    genre           VARCHAR(20),
     location        VARCHAR(100),
     year_start      INT,
     year_end        INT,
@@ -29,6 +28,12 @@ CREATE TABLE artist(
 
 DROP TABLE IF EXISTS sampled;
 CREATE TABLE sampled(
-    song_md5        VARCHAR(50),
-    sampled_md5     VARCHAR(50)
+    song_md5        VARCHAR(50) NOT NULL,
+    sampled_md5     VARCHAR(50) NOT NULL
+);
+
+DROP TABLE IF EXISTS genre;
+CREATE TABLE genre(
+    artist_id       VARCHAR(30) NOT NULL,
+    genre           VARCHAR(30)
 );
