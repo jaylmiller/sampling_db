@@ -1,3 +1,7 @@
+"""This module just contains functions that call the echonest
+API and return the relevant data.
+"""
+
 from config import EN_API_KEY
 import urllib
 import simplejson as json
