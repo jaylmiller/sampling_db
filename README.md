@@ -33,4 +33,6 @@ Your flask app should be up and running!
 
 **10** See database_def.sql for our database specification.
 
-**11** Stored SQL procedures are in procedures.sql. The db_interface.py module has methods which interface with our database using the python-mysql-connector library. These methods are used to populate the database. *Add in where SQL stuff is called in the website?*
+**11** Stored SQL procedures are in procedures.sql. The db_interface.py module has methods which interface with our database using the python-mysql-connector library. These methods are used to populate the database. SQL stored procedures are called in samp_map.py using python-mysql-connector library.
+
+**12** All files are located on this public github. database_dump.sql contains the information in the database at the time of submission.
