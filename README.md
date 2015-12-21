@@ -23,6 +23,8 @@ The webscraper.py, db_interface.py, and get_echonest_data.py scripts are the 3 p
 
 ![alt text](https://raw.githubusercontent.com/jaym910/sampling_db/master/preview2.png "Preview 2")
 
+![alt text](https://raw.githubusercontent.com/jaym910/sampling_db/master/preview3.png "Preview 3")
+
 **10** See database_def.sql for our database specification.
 
 **11** Stored SQL procedures are in procedures.sql. The db_interface.py module has methods which interface with our database using the python-mysql-connector library. These methods are used to populate the database. *Add in where SQL stuff is called in the website?*
