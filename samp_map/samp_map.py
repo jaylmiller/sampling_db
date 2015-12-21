@@ -62,12 +62,12 @@ def mapview():
             else:
                 dance_str = "Average Danceability of Songs that Sample this Artist: " \
                             + "None!"
-            cursor.callproc('WhoSampledGenre', [name])
+            cursor.callproc('FWhoSampledGenre', [name])
             for result in cursor.stored_results():
                 genre = result.fetchall()
             if len(genre) > 0:
                 genre_str = "Most common genre of Songs that Sample this Artist: " \
-                            + str(genre[0][1])
+                            + str(genre[0][0])
             else:
                 genre_str = "Most common genre of Songs that Sample this Artist: " \
                             + "None!!"
@@ -86,12 +86,12 @@ def mapview():
             else:
                 dance_str = "Average Danceability of Songs this Artist Samples: " \
                             + "None!!"
-            cursor.callproc('SampledGenre', [name])
+            cursor.callproc('FSampledGenre', [name])
             for result in cursor.stored_results():
                 genre = result.fetchall()
             if len(genre) > 0:
                 genre_str = "Most common genre of Songs that this Artist Samples: " \
-                            + str(genre[0][1])
+                            + str(genre[0][0])
             else:
                 genre_str = "Most common genre of Songs that this Artist Samples: " \
                             + "None!!"
@@ -159,12 +159,12 @@ def stats():
     for result in cursor.stored_results():
         most_dance = result.fetchall()
     cursor.close()
-    return render_template('stats.html', g_most_sampled = str(g_most_sampled[0][0]), \
-                                         g_most_samples = str(g_most_samples[0][0]), \
-                                         a_most_samples = str(a_most_samples[0][0]), \
-                                         a_most_sampled = str(a_most_sampled[0][0]), \
-                                         s_most_samples = str(s_most_samples[0][0]), \
-                                         s_most_sampled = str(s_most_sampled[0][0]), \
+    return render_template('stats.html', g_most_sampled = g_most_sampled[0], \
+                                         g_most_samples = g_most_samples[0], \
+                                         a_most_samples = a_most_samples[0], \
+                                         a_most_sampled = a_most_sampled[0], \
+                                         s_most_samples = s_most_samples[0], \
+                                         s_most_sampled = s_most_sampled[0], \
                                          most_dance_s   = str(most_dance[0][0]),  \
                                          most_dance_a   = str(most_dance[0][1]),  \
                                          most_dance_d   = str(most_dance[0][2]))

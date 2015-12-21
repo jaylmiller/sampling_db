@@ -204,13 +204,23 @@ END;
 DROP PROCEDURE IF EXISTS MostDance //
 CREATE PROCEDURE MostDance()
 BEGIN
-  SELECT av.title, av.name, MAX(av.av_dance)
+  SELECT av.title, av.name, av.av_dance
   FROM (SELECT a1.name, s1.title, AVG(s2.danceability) as av_dance
         FROM song as s1, song as s2, artist as a1, sampled as samp
         WHERE s1.artist_id = a1.artist_id
               AND s1.audio_md5 = samp.sampled_md5
               AND s2.audio_md5 = samp.song_md5
-        GROUP BY a1.name, s1.title) as av;
+        GROUP BY a1.name, s1.title) as av
+  WHERE av.av_dance in (
+    SELECT MAX(av.av_dance)
+    FROM (
+        SELECT a1.name, s1.title, AVG(s2.danceability) as av_dance
+        FROM song as s1, song as s2, artist as a1, sampled as samp
+        WHERE s1.artist_id = a1.artist_id
+              AND s1.audio_md5 = samp.sampled_md5
+              AND s2.audio_md5 = samp.song_md5
+        GROUP BY a1.name, s1.title
+    ) as av);
 END;
 //
 
@@ -218,13 +228,19 @@ END;
 DROP PROCEDURE IF EXISTS GenreMostSamples //
 CREATE PROCEDURE GenreMostSamples()
 BEGIN
-  SELECT mx.genre
-  FROM (SELECT count.genre, MAX(count.n_samps)
-        FROM (SELECT g.genre, COUNT(*) as n_samps
-              FROM genre as g, song as s, sampled as samp
-              WHERE g.artist_id = s.artist_id
-                    AND s.audio_md5 = samp.song_md5
-              GROUP BY g.genre) as count) as mx;
+  SELECT count.genre, count.n_samps
+  FROM (SELECT g.genre, COUNT(*) as n_samps
+        FROM genre as g, song as s, sampled as samp
+        WHERE g.artist_id = s.artist_id
+        AND s.audio_md5 = samp.song_md5
+        GROUP BY g.genre) as count
+  WHERE count.n_samps in (
+  SELECT MAX(count.n_samps)
+  FROM (SELECT g.genre, COUNT(*) as n_samps
+        FROM genre as g, song as s, sampled as samp
+        WHERE g.artist_id = s.artist_id
+        AND s.audio_md5 = samp.song_md5
+        GROUP BY g.genre) as count);
 END;
 //
 
@@ -232,43 +248,59 @@ END;
 DROP PROCEDURE IF EXISTS GenreMostSampled //
 CREATE PROCEDURE GenreMostSampled()
 BEGIN
-  SELECT mx.genre
-  FROM (SELECT count.genre, MAX(count.n_samps)
-        FROM (SELECT g.genre, COUNT(*) as n_samps
-              FROM genre as g, song as s, sampled as samp
-              WHERE g.artist_id = s.artist_id
-                    AND s.audio_md5 = samp.sampled_md5
-              GROUP BY g.genre) as count) as mx;
+  SELECT count.genre, count.n_samps
+  FROM (SELECT g.genre, COUNT(*) as n_samps
+        FROM genre as g, song as s, sampled as samp
+        WHERE g.artist_id = s.artist_id
+        AND s.audio_md5 = samp.sampled_md5
+        GROUP BY g.genre) as count
+  WHERE count.n_samps in (
+  SELECT MAX(count.n_samps)
+  FROM (SELECT g.genre, COUNT(*) as n_samps
+        FROM genre as g, song as s, sampled as samp
+        WHERE g.artist_id = s.artist_id
+        AND s.audio_md5 = samp.sampled_md5
+        GROUP BY g.genre) as count);
 END;
 //
-
 
 /* Returns artist that is sampled the most */
 DROP PROCEDURE IF EXISTS ArtistMostSampled //
 CREATE PROCEDURE ArtistMostSampled()
 BEGIN
-  SELECT mx.name
-  FROM (SELECT count.name, MAX(count.n_samps)
-        FROM (SELECT a.name, COUNT(*) as n_samps
-              FROM artist as a, song as s, sampled as samp
-              WHERE a.artist_id = s.artist_id
-                    AND s.audio_md5 = samp.sampled_md5
-              GROUP BY a.name) as count) as mx;
+  SELECT count.name, count.n_samps
+  FROM (SELECT a.name, COUNT(*) as n_samps
+        FROM artist as a, song as s, sampled as samp
+        WHERE a.artist_id = s.artist_id
+        AND s.audio_md5 = samp.sampled_md5
+        GROUP BY a.name) as count
+  WHERE count.n_samps in (
+  SELECT MAX(count.n_samps)
+  FROM (SELECT a.name, COUNT(*) as n_samps
+        FROM artist as a, song as s, sampled as samp
+        WHERE a.artist_id = s.artist_id
+        AND s.audio_md5 = samp.sampled_md5
+        GROUP BY a.name) as count);
 END;
 //
-
 
 /* Returns artist that samples the most */
 DROP PROCEDURE IF EXISTS ArtistMostSamples //
 CREATE PROCEDURE ArtistMostSamples()
 BEGIN
-  SELECT mx.name
-  FROM (SELECT count.name, MAX(count.n_samps)
-        FROM (SELECT a.name, COUNT(*) as n_samps
-              FROM artist as a, song as s, sampled as samp
-              WHERE a.artist_id = s.artist_id
-                    AND s.audio_md5 = samp.song_md5
-              GROUP BY a.name) as count) as mx;
+  SELECT count.name, count.n_samps
+  FROM (SELECT a.name, COUNT(*) as n_samps
+        FROM artist as a, song as s, sampled as samp
+        WHERE a.artist_id = s.artist_id
+        AND s.audio_md5 = samp.song_md5
+        GROUP BY a.name) as count
+  WHERE count.n_samps in (
+  SELECT MAX(count.n_samps)
+  FROM (SELECT a.name, COUNT(*) as n_samps
+        FROM artist as a, song as s, sampled as samp
+        WHERE a.artist_id = s.artist_id
+        AND s.audio_md5 = samp.song_md5
+        GROUP BY a.name) as count);
 END;
 //
 
@@ -276,26 +308,37 @@ END;
 DROP PROCEDURE IF EXISTS SongMostSamples //
 CREATE PROCEDURE SongMostSamples()
 BEGIN
-  SELECT mx.title
-  FROM (SELECT count.title, MAX(count.n_samps)
-        FROM (SELECT s.title, COUNT(*) as n_samps
-              FROM song as s, sampled as samp
-              WHERE s.audio_md5 = samp.song_md5
-              GROUP BY s.title) as count) as mx;
+  SELECT count.title, a.name, count.n_samps
+  FROM (SELECT s.title, s.artist_id, COUNT(*) as n_samps
+        FROM song as s, sampled as samp
+        WHERE s.audio_md5 = samp.song_md5
+        GROUP BY s.title) as count, artist as a
+  WHERE a.artist_id = count.artist_id AND count.n_samps in (
+    SELECT MAX(count.n_samps)
+    FROM (SELECT s.title, COUNT(*) as n_samps
+          FROM song as s, sampled as samp
+          WHERE s.audio_md5 = samp.song_md5
+          GROUP BY s.title) as count
+    );
 END;
 //
-
 
 /* Returns song that is sampled the most */
 DROP PROCEDURE IF EXISTS SongMostSampled //
 CREATE PROCEDURE SongMostSampled()
 BEGIN
-  SELECT mx.title
-  FROM (SELECT count.title, MAX(count.n_samps)
-        FROM (SELECT s.title, COUNT(*) as n_samps
-              FROM song as s, sampled as samp
-              WHERE s.audio_md5 = samp.sampled_md5
-              GROUP BY s.title) as count) as mx;
+  SELECT count.title, a.name, count.n_samps
+  FROM (SELECT s.title, s.artist_id, COUNT(*) as n_samps
+        FROM song as s, sampled as samp
+        WHERE s.audio_md5 = samp.sampled_md5
+        GROUP BY s.title) as count, artist as a
+  WHERE a.artist_id = count.artist_id AND count.n_samps in (
+    SELECT MAX(count.n_samps)
+    FROM (SELECT s.title, COUNT(*) as n_samps
+          FROM song as s, sampled as samp
+          WHERE s.audio_md5 = samp.sampled_md5
+          GROUP BY s.title) as count
+    );
 END;
 //
 
@@ -307,4 +350,5 @@ BEGIN
   WHERE name LIKE artist_name;
 END;
 //
+
 DELIMITER ;
