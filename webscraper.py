@@ -153,5 +153,5 @@ def trackpage_from_samplepage(url, get_sampled=True):
 if __name__ == "__main__":
     q = Queue.Queue()
     cnx = get_connection()
-    crawl(cnx, 'http://www.whosampled.com/Pusha-T/Numbers-on-the-Boards/',
+    crawl(cnx, 'http://www.whosampled.com/Freddie-Gibbs/Robes/',
           q, [], [])
