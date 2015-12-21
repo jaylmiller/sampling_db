@@ -3,6 +3,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
 from flask.ext.googlemaps import GoogleMaps
 from flask.ext.googlemaps import Map
+from config import MYSQL_INFO
 import mysql.connector
 import geocoder
 import random
@@ -17,9 +18,7 @@ app.config.from_object(__name__)
 GoogleMaps(app)
 
 def connect_db():
-    return mysql.connector.connect(user='trevoraron', password='dinn3r$12',\
-            host='db-final-project.cqpqwl7k3umb.us-west-2.rds.amazonaws.com', \
-            database='final')
+    return mysql.connector.connect(**MYSQL_INFO)
 
 @app.before_request
 def before_request():
