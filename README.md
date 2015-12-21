@@ -13,7 +13,13 @@ The webscraper.py, db_interface.py, and get_echonest_data.py scripts are the 3 p
 
 **5** N/A
 
-**6** The website can be reached at http://52.32.119.97:5000/.
+**6** The website can be reached at http://52.32.119.97:5000/ 
+
+To run the website, write a config.py file containing a dictionary called MYSQL_INFO, and put all your database information there. (We didn't wan't to upload our database password to github!). This should look like {'user': username, 'password': password, 'host': host name, 'database':final}. Put this in the samp_map folder. Also make sure you have created the db, ran procedures.sql, and have populated the db with some values. Then, install the following python packages: geocoder, mysql-connector-python, flask, flask-googlemaps. Then, run the command
+
+$python samp_map/samp_map.py
+
+Your flask app should be up and running!
 
 **7** Our two major areas of specialization were extraction of real data from online sources and a specialized forms-based interface with sophisticated report generation.
 
