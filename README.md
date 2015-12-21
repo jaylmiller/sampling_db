@@ -15,7 +15,7 @@ The webscraper.py, db_interface.py, and get_echonest_data.py scripts are the 3 p
 
 **6** *Trevor fill this in on how to run the website?*
 
-**7** Our two major areas of specialization were extraction of real data from online sources and a specialized view or forms-based interface with sophisticated report generation.
+**7** Our two major areas of specialization were extraction of real data from online sources and a specialized forms-based interface with sophisticated report generation.
 
 **8** One limitation of our database is that it is fairly small, and only contains a small subset of data on artists songs and which songs sampled other songs. This is because we discovered that our webcrawler would get our IP's blocked from www.whosampled.com, and thus we had to make our webcrawler work slower than optimal speeds. If we had started the information extraction process earlier on, our database would have been larger and the information would have been more reflective of the real music world. Another limitation is that the web interface is fairly slow, because some of the queries being made are fairly complex. Given more time, this could have been improved by doing some query optimization.
 
