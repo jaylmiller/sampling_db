@@ -4,7 +4,7 @@
 
 **1** N/A
 
-**2** For this project, we created a database that holds info on artists, songs. The primary relation in this database is one called 'sampled' which maps a primary song, to other songs which are sampled (https://en.wikipedia.org/wiki/Sampling_(music)) by the primary song. Other info on artists and songs that are stored in the database are artist location, years active, and metrics on the song such as estimated tempo, and a 'danceability' scale. The main report produced is a map which when given an artist, will show that artist on the map as well as show the locations of all the artists that that artist sampled (or vice versa).
+**2** For this project, we created a database that holds info on artists and their songs. The primary relation in this database is one called 'sampled' which maps a primary song, to other songs which are sampled (https://en.wikipedia.org/wiki/Sampling_(music)) by the primary song. Other info on artists and songs that are stored in the database are artist location, years active, and metrics on the song such as estimated tempo, and a 'danceability' scale. The main report produced is a map which when given an artist, will show that artist on the map as well as show the locations of all the artists that that artist sampled (or vice versa).
 
 **3** N/A
 
@@ -15,9 +15,9 @@ The webscraper.py, db_interface.py, and get_echonest_data.py scripts are the 3 p
 
 **6** *Trevor fill this in on how to run the website?*
 
-**7** Our two major areas of specialization were extraction of real data from online sources and a specialized view or forms-based interface with sophisticated report generation.
+**7** Our two major areas of specialization were extraction of real data from online sources and a specialized forms-based interface with sophisticated report generation.
 
-**8** One limitation of our database is that it is fairly small, and only contains a small subset of data on artists songs and which songs sampled other songs. This is because we discovered that our webcrawler would get our IP's blocked from www.whosampled.com, and thus we had to make our webcrawler work slower than optimal speeds. If we had started the information extraction process earlier on, our database would have been larger and the information would have been more reflective of the real music world. Another limitation is that the web interface is fairly slow, because some of the queries being made are fairly complex. Given more time, this could have been improved by doing some query optimization.
+**8** One limitation of our database is that it is fairly small, and only contains a small subset of data on artists songs and which songs sampled other songs. This is because we discovered that our webcrawler would get our IP's blocked from www.whosampled.com if it made too many requests, and thus we had to make our webcrawler work at a slower-than-optimal speed. If we had started the information extraction process earlier on, our database would have been larger and the information would have been more reflective of the real music world. Another limitation is that the web interface is fairly slow, because some of the queries being made are fairly complex. Given more time, this could have been improved by doing some query optimization.
 
 **9** *Fill in when website done*
 
