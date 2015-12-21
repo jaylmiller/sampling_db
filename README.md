@@ -13,13 +13,15 @@ The webscraper.py, db_interface.py, and get_echonest_data.py scripts are the 3 p
 
 **5** N/A
 
-**6** *Trevor fill this in on how to run the website?*
+**6** The website can be reached at http://52.32.119.97:5000/.
 
 **7** Our two major areas of specialization were extraction of real data from online sources and a specialized forms-based interface with sophisticated report generation.
 
 **8** One limitation of our database is that it is fairly small, and only contains a small subset of data on artists songs and which songs sampled other songs. This is because we discovered that our webcrawler would get our IP's blocked from www.whosampled.com if it made too many requests, and thus we had to make our webcrawler work at a slower-than-optimal speed. If we had started the information extraction process earlier on, our database would have been larger and the information would have been more reflective of the real music world. Another limitation is that the web interface is fairly slow, because some of the queries being made are fairly complex. Given more time, this could have been improved by doing some query optimization.
 
-**9** *Fill in when website done*
+**9** ![alt text](https://raw.githubusercontent.com/jaym910/sampling_db/master/preview1.png "Preview 1")
+
+![alt text](https://raw.githubusercontent.com/jaym910/sampling_db/master/preview2.png "Preview 2")
 
 **10** See database_def.sql for our database specification.
 
