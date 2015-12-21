@@ -95,7 +95,9 @@ BEGIN
 END;
 //
 
-/* Returns most common genre of songs who sample those by artist name */
+/* Returns most common genre of songs who sample those by artist name
+   DEPRECATED --- don't use this takes too long
+                  also just plain doesn't work lol */
 DROP PROCEDURE IF EXISTS WhoSampledGenre //
 CREATE PROCEDURE WhoSampledGenre(IN artist_name VARCHAR(30))
 BEGIN
@@ -113,7 +115,40 @@ BEGIN
 END;
 //
 
-/* Returns most common genre of songs that are sampled by artist name */
+/* Returns most common genre of songs who sample those by artist name
+   420BlazinFast version */
+DROP PROCEDURE IF EXISTS FWhoSampledGenre //
+CREATE PROCEDURE FWhoSampledGenre(IN artist_name VARCHAR(30))
+BEGIN
+  SELECT count.genre, count.count
+  FROM (SELECT g.genre, count(*) as count
+        FROM (SELECT samp.song_md5
+              FROM song as s, artist as a, sampled as samp
+              WHERE a.name LIKE artist_name
+              AND s.artist_id = a.artist_id
+              AND s.audio_md5 = samp.sampled_md5) as q1, song as s1, artist as a1, genre as g
+        WHERE q1.song_md5 = s1.audio_md5
+        AND   a1.artist_id = s1.artist_id
+        AND   g.artist_id = a1.artist_id
+        GROUP BY g.genre) as count
+  WHERE count.count in  (
+  SELECT max(count.count)
+  FROM (SELECT g.genre, count(*) as count
+        FROM (SELECT samp.song_md5
+              FROM song as s, artist as a, sampled as samp
+              WHERE a.name LIKE artist_name
+              AND s.artist_id = a.artist_id
+              AND s.audio_md5 = samp.sampled_md5) as q1, song as s1, artist as a1, genre as g
+        WHERE q1.song_md5 = s1.audio_md5
+        AND   a1.artist_id = s1.artist_id
+        AND   g.artist_id = a1.artist_id
+        GROUP BY g.genre) as count);
+END;
+//
+
+/* Returns most common genre of songs that are sampled by artist name
+   DEPRECATED --- TO SLOW!!!
+                  also gives incorrect answer */
 DROP PROCEDURE IF EXISTS SampledGenre //
 CREATE PROCEDURE SampledGenre(IN artist_name VARCHAR(30))
 BEGIN
@@ -128,6 +163,38 @@ BEGIN
               AND g.artist_id LIKE a2.artist_id
         GROUP BY a1.artist_id, g.genre) as count
   GROUP BY count.artist_id;
+END;
+//
+
+
+/* Returns most common genre of songs that are sampled by artist_name
+   420BlazinFast version */
+DROP PROCEDURE IF EXISTS FSampledGenre //
+CREATE PROCEDURE FSampledGenre(IN artist_name VARCHAR(30))
+BEGIN
+  SELECT count.genre, count.count
+  FROM (SELECT g.genre, count(*) as count
+        FROM (SELECT samp.sampled_md5
+              FROM song as s, artist as a, sampled as samp
+              WHERE a.name LIKE artist_name
+              AND s.artist_id = a.artist_id
+              AND s.audio_md5 = samp.song_md5) as q1, song as s1, artist as a1, genre as g
+        WHERE q1.sampled_md5 = s1.audio_md5
+        AND   a1.artist_id = s1.artist_id
+        AND   g.artist_id = a1.artist_id
+        GROUP BY g.genre) as count
+  WHERE count.count in  (
+  SELECT max(count.count)
+  FROM (SELECT g.genre, count(*) as count
+        FROM (SELECT samp.sampled_md5
+              FROM song as s, artist as a, sampled as samp
+              WHERE a.name LIKE artist_name
+              AND s.artist_id = a.artist_id
+              AND s.audio_md5 = samp.song_md5) as q1, song as s1, artist as a1, genre as g
+        WHERE q1.sampled_md5 = s1.audio_md5
+        AND   a1.artist_id = s1.artist_id
+        AND   g.artist_id = a1.artist_id
+        GROUP BY g.genre) as count);
 END;
 //
 
