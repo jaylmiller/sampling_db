@@ -122,6 +122,9 @@ def get_markers_and_info(songs, who_sampled):
             temp_str = "<p> " + str(s2_title) + " by " + str(a2_name) + "</p>"\
                        "<p>Was Sampled In: " + str(s1_title) + "</p>"
         loc = geocoder.google(str(a2_loc)).latlng
+	#hack for when it fails
+	while len(loc) < 1:
+            loc = geocoder.google(str(a2_loc)).latlng
         #Introduce jiggle
         loc[0] = loc[0] + random.randrange(-100,100) / 1000.0
         loc[1] = loc[1] + random.randrange(-100,100) / 1000.0
@@ -175,4 +178,4 @@ def stats():
 #return redirect(url_for(function))
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
